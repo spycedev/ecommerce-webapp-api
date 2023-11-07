@@ -36,9 +36,10 @@ app.get('/products', (request, response) => {
 
 // Route for getting a product
 app.get('/products/:id', (request, response) => {
-    const id = request.params;
+    const id = request.params.id;
     console.log(id);
     db.query('SELECT * FROM products WHERE id = ?', id, (error, result) => {
+        console.log(result);
         if (error) console.log(error);
         else response.send(result);
     });
@@ -59,8 +60,8 @@ app.post('/products/create', (request, response) => {
 });
 
 // Route for updating a product
-app.put('/products/update', (request, response) => {
-    const id = request.body.id;
+app.put('/products/:id/update', (request, response) => {
+    const id = request.params.id;
     const name = request.body.name;
     const description = request.body.description;
     const price = request.body.price;
