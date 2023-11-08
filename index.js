@@ -60,22 +60,18 @@ app.post('/products/create', (request, response) => {
     const price = request.body.price;
     const quantity = request.body.quantity;
     const image = request.body.image;
+    let imageName = '';
 
-    console.log(request);
-
-    if (image) {
-        const name = image.name;
-        const saveAs = `${new Date().toDateString}_${name}`;
-        image.mv(`http://localhost:3000/public/files/${saveAs}`, function(error) {
-            if (error) console.log(error);
-            else response.send(result);
-        });
+    if (!image) imageName = 'product-placeholder.png';
+    else {
+        imageName = image.name;
+        // Code for file upload here
     }
 
-    // db.query('INSERT INTO products (name, description, price, quantity, image) VALUES (?, ?, ?, ?, ?)', [name, description, price, quantity, image], (error, result) => {
-    //     if (error) console.log(error);
-    //     else response.send('New product created.');
-    // });
+    db.query('INSERT INTO products (name, description, price, quantity, image) VALUES (?, ?, ?, ?, ?)', [name, description, price, quantity, imageName], (error, result) => {
+        if (error) console.log(error);
+        else response.send('New product created.');
+    });
 });
 
 // Route for updating a product
