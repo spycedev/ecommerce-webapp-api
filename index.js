@@ -1,11 +1,19 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(
+    fileUpload({
+        useTempFiles: true,
+        safeFileNames: true,
+        preserveExtension:true
+    })
+);
 
 // Database variable
 const db = mysql.createConnection({
@@ -53,10 +61,21 @@ app.post('/products/create', (request, response) => {
     const quantity = request.body.quantity;
     const image = request.body.image;
 
-    db.query('INSERT INTO products (name, description, price, quantity, image) VALUES (?, ?, ?, ?, ?)', [name, description, price, quantity, image], (error, result) => {
-        if (error) console.log(error);
-        else response.send('New product created.');
-    });
+    console.log(request);
+
+    if (image) {
+        const name = image.name;
+        const saveAs = `${new Date().toDateString}_${name}`;
+        image.mv(`http://localhost:3000/public/files/${saveAs}`, function(error) {
+            if (error) console.log(error);
+            else response.send(result);
+        });
+    }
+
+    // db.query('INSERT INTO products (name, description, price, quantity, image) VALUES (?, ?, ?, ?, ?)', [name, description, price, quantity, image], (error, result) => {
+    //     if (error) console.log(error);
+    //     else response.send('New product created.');
+    // });
 });
 
 // Route for updating a product
