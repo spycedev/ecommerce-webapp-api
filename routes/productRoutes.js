@@ -1,15 +1,20 @@
 import express from "express";
 import db from "../config/mysql";
+import { selectProducts } from "../queries/productQueries";
 
 const PRODUCT_ROUTES = express.Router();
 
 // Route for getting all products
-PRODUCT_ROUTES.get("/", (request, response) => {
-  db.query("SELECT * FROM products", (error, result) => {
-    if (error) console.log(error);
-    else response.send(result);
-  });
+PRODUCT_ROUTES.get("/", async (request, response) => {
+  // again using async code to make code more readable and less messy
+  const products = await selectProducts();
+
+  response.send(products);
 });
+
+// CODE BREAKS FROM HERE AS I DIDN'T UPDATE IT
+// as the db variable is now async, you'll have to update your queries to await the result.
+// as the example above
 
 // Route for getting a product
 PRODUCT_ROUTES.get("/:id", (request, response) => {
